@@ -1,4 +1,4 @@
-
+[![R](https://github.com/dhia-gharsallaoui/watervalues/actions/workflows/r.yml/badge.svg)](https://github.com/dhia-gharsallaoui/watervalues/actions/workflows/r.yml)
 <img src="vignettes/images/antares_simulator.png" align="right" width=250 />
 <br/>
 
