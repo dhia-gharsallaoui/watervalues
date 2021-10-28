@@ -1,15 +1,37 @@
-- name: R Package Validation Report
-  # You may pin to the exact commit or the version.
-  # uses: insightsengineering/thevalidatoR@577fd784585e86f6594c858c72b4126685cdb3b6
-  uses: insightsengineering/thevalidatoR@v1.0
-  with:
-    # Path to package's root.
-    report_pkg_dir: # optional, default is .
-    # File path of the R markdown template to use for the report.
-The default template is available [here.](./template.Rmd)
+---
+name: R Package Validation report
 
-    report_template_path: # optional, default is /template.Rmd
-    # The file format of the validation report. See `rmarkdown::render`'s
-`output_format` parameter for accepted values.
+on: # Run this action when a release is published
+  release:
+    types: [published]
+  workflow_dispatch:
+  push:
+jobs:
+  r-pkg-validation:
+    name: Create report 📃
+    runs-on: ubuntu-latest
+    # Set Github token permissions
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+      packages: write
+      deployments: write
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
 
-    report_rmarkdown_format: # optional, default is all
+      - name: Build report 🏗
+        uses: insightsengineering/thevalidatoR@main
+        # see parameters above for custom templates and other formats
+
+      # Upload the validation report to the release
+      - name: Upload report to release 🔼
+        if: success()
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ./validation_report.pdf
+          asset_name: validation-report.pdf
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          overwrite: false
